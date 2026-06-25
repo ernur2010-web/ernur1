@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://my-first-project-github-io-1.onrender.com/sitemap.xml

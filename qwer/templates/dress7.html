@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="kk">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ұлттық күртеше | KZ Дүкені</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body class="product-page theme-7">
+
+    <!-- Үстіңгі навигация (басты беттегідей) -->
+    <nav>
+        <h2>KZ Ұлттық киімдер дүкені</h2>
+    </nav>
+
+    <!-- Негізгі мазмұн -->
+    <main class="product-detail">
+        <!-- Сол жақ: Сурет -->
+        <div class="product-gallery">
+            <img src="{{ url_for('static', filename='dress7.jpg') }}" alt="Ұлттық күртеше 1" class="main-image">
+            <!-- Қосымша шағын суреттер (опционально) -->
+            <div class="thumbnail-list">
+                <img src="{{ url_for('static', filename='dress7.jpg') }}" class="thumbnail active">
+                <!-- Басқа ракурстағы суреттер болса қосуға болады -->
+            </div>
+        </div>
+
+        <!-- Оң жақ: Ақпарат -->
+        <div class="product-info">
+            <h1 class="product-title">Ұлттық күртеше 1</h1>
+            <p class="product-description">
+                Дәстүрлі қазақы ою-өрнекпен безендірілген, табиғи мақта-зығыр матадан тігілген
+                жоғары сапалы ұлттық күртеше. Мерекелік шараларға және күнделікті киюге жарайды.
+            </p>
+
+            <!-- Баға бөлімі -->
+            <div class="price-section">
+                <span class="price">16 000 ₸</span>
+                <span class="stock">Қоймада бар</span>
+            </div>
+
+            <!-- Сипаттамалар тізімі -->
+            <ul class="features">
+                <li><strong>Материал:</strong> 100% мақта</li>
+                <li><strong>Түсі:</strong> Қою көк / Алтын өрнек</li>
+                <li><strong>Өлшемдер:</strong> S, M, L, XL</li>
+                <li><strong>Күтім:</strong> 30°C-та қолмен жуу</li>
+            </ul>
+
+            <!-- Әрекет батырмалары -->
+            <div class="action-buttons">
+                <a href="https://wa.me/+77773988869?text=Сәлем!%20Мен%20Ұлттық%20күртеше%201%20сатып%20алғым%20келеді"
+                    target="_blank" class="btn btn-primary">
+                    🛒 WhatsApp арқылы сатып алу
+                </a>
+                <a href="/" class="btn btn-secondary">← Басты бетке оралу</a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Төменгі бөлік (футер) -->
+    <footer>
+        <h3>Байланыс: +7 777 398 8869📞</h3>
+    </footer>
+
+
+    <!-- Модальды терезе (lightbox) -->
+    <div id="imageModal" class="modal">
+        <span class="close-modal">&times;</span>
+        <img class="modal-content" id="modalImage">
+    </div>
+
+
+    <script>
+        (function () {
+            // Модаль элементтерін алу
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImage');
+            const mainImage = document.querySelector('.main-image');
+            const closeBtn = document.querySelector('.close-modal');
+
+            // Егер негізгі сурет табылса, оған клик оқиғасын тіркеу
+            if (mainImage) {
+                mainImage.style.cursor = 'zoom-in'; // курсорды өзгерту
+                mainImage.addEventListener('click', function () {
+                    modal.style.display = 'block';
+                    modalImg.src = this.src;
+                });
+            }
+
+
+            // 2. 👇 МИНИАТЮРАЛАР ҮШІН ҚОСЫМША КОД ОСЫ АРАҒА ҚОЙЫЛАДЫ 👇
+            const thumbnails = document.querySelectorAll('.thumbnail');
+            thumbnails.forEach(thumb => {
+                thumb.addEventListener('click', function () {
+                    modal.style.display = 'block';
+                    modalImg.src = this.src;
+
+                    // актив класс ауыстыру (опционально)
+                    thumbnails.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+
+                    // Егер негізгі суретті де ауыстырғыңыз келсе:
+                    if (mainImage) {
+                        mainImage.src = this.src;
+                    }
+                });
+            });
+            // 👆 МИНИАТЮРА КОДЫНЫҢ СОҢЫ 👆
+
+
+            // Жабу батырмасы арқылы жабу
+            if (closeBtn) {
+                closeBtn.addEventListener('click', function () {
+                    modal.style.display = 'none';
+                });
+            }
+
+            // Модальдың сыртын басқанда жабу
+            window.addEventListener('click', function (event) {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+
+            // ESC пернесін басқанда жабу
+            document.addEventListener('keydown', function (event) {
+                if (event.key === 'Escape' && modal.style.display === 'block') {
+                    modal.style.display = 'none';
+                }
+            });
+        })();
+    </script>
+    <script>
+        (function () {
+            var body = document.body;
+            var theme = body.getAttribute('data-theme');
+            if (theme) {
+                body.style.setProperty('--primary', theme);
+            }
+        })();
+    </script>
+</body>
+
+</html>
