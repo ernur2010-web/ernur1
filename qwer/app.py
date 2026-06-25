@@ -66,6 +66,8 @@ def slugify(text):
 # ============================================================
 def format_price(n):
     return f"{int(n):,}".replace(',', ' ') + ' ₸'
+ 
+def get_products_list():
     return list(load_products().values())
  
 def get_product_by_slug(slug):
