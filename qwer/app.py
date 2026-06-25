@@ -1,15 +1,15 @@
 from flask import Flask, render_template, abort, Response, request, redirect, session
 from functools import wraps
 import json, os, re, urllib.parse
-
+ 
 app = Flask(__name__)
 app.secret_key = "kz_admin_secret_2025"   # ← өзгертуге болады
-
+ 
 # FIX: urlencode фильтрі — product_detail.html-де қолданылады
 @app.template_filter('urlencode')
 def urlencode_filter(s):
     return urllib.parse.quote(str(s))
-
+ 
 # ============================================================
 #  КОНФИГ
 # ============================================================
@@ -20,7 +20,7 @@ CONTACT_DISPLAY= "+7 777 398 8869"
 SITE_NAME      = "KZ Ұлттық киімдер дүкені"
 SITE_DESC      = "Қазақстанның дәстүрлі ұлттық киімдері. Камзол, шапан, күртеше."
 PRODUCTS_FILE  = "products.json"     # товарлар сақталатын файл
-
+ 
 # ============================================================
 #  JSON-ДАН ТОВАРЛАР ОҚУ / ЖАЗУ
 # ============================================================
@@ -41,40 +41,40 @@ DEFAULT_PRODUCTS = {
     "14": {"id":14,"slug":"shapan-er-konyr-kok-saltanat","title":"Ұлттық күртеше 14","price":"16 000 ₸","price_num":16000,"image":"dress14.1.png","detail_image":"dress14.jpg","theme":"theme-14","category":"men","description":"Ерлерге арналған салтанатты шапан.","material":"Жұмсақ барқыт матасы","color":"Қанық қою көк","sizes":["S","M","L","XL"]},
     "15": {"id":15,"slug":"bomber-qyz-borda-barkyt","title":"Ұлттық күртеше 15","price":"16 000 ₸","price_num":16000,"image":"dress15.1.png","detail_image":"dress15.jpg","theme":"theme-15","category":"women","description":"Заманауи үлгідегі қыздарға арналған бомбер-жакет.","material":"Жұмсақ барқыт матасы","color":"Қою шие (бордо)","sizes":["S","M","L","XL"]},
 }
-
+ 
 def load_products():
     if os.path.exists(PRODUCTS_FILE):
         with open(PRODUCTS_FILE, "r", encoding="utf-8") as f:
             return json.load(f)
     save_products(DEFAULT_PRODUCTS)
     return DEFAULT_PRODUCTS
-
+ 
 def save_products(data):
     with open(PRODUCTS_FILE, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
-
-KK_MAP = str.maketrans('ұүқғңөіәһ', 'uukgnnoiah')
+ 
+KK_MAP = str.maketrans('ұүқғңөіәһ', 'uukgnoiah')
 def slugify(text):
     text = text.lower().strip().translate(KK_MAP)
     text = re.sub(r'[а-яёa-z0-9\s-]', lambda m: m.group() if re.match(r'[a-z0-9\s-]', m.group()) else '', text)
     text = re.sub(r'[\s_]+', '-', text)
     text = re.sub(r'-+', '-', text)
     return text.strip('-')[:60]
-
+ 
 # ============================================================
 #  HELPERS
 # ============================================================
 def format_price(n):
     return f"{int(n):,}".replace(',', ' ') + ' ₸'
     return list(load_products().values())
-
+ 
 def get_product_by_slug(slug):
     return next((p for p in get_products_list() if p['slug'] == slug), None)
-
+ 
 def get_related(product, count=3):
     return [p for p in get_products_list()
             if p['category'] == product['category'] and p['id'] != product['id']][:count]
-
+ 
 def admin_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
@@ -82,7 +82,7 @@ def admin_required(f):
             return redirect('/admin/login')
         return f(*args, **kwargs)
     return decorated
-
+ 
 # ============================================================
 #  САЙТ МАРШРУТТАРЫ
 # ============================================================
@@ -91,28 +91,28 @@ def index():
     return render_template('index.html', products=get_products_list(),
                            contact=CONTACT_DISPLAY, phone=CONTACT_PHONE,
                            site_name=SITE_NAME, site_description=SITE_DESC)
-
+ 
 @app.route('/women')
 def women():
     filtered = [p for p in get_products_list() if p['category'] == 'women']
     return render_template('category.html', products=filtered, category="Қыздар",
                            category_en="women", category_desc="Қыздарға арналған қазақ ұлттық камзол мен күртеше.",
                            contact=CONTACT_DISPLAY, phone=CONTACT_PHONE, site_name=SITE_NAME)
-
+ 
 @app.route('/men')
 def men():
     filtered = [p for p in get_products_list() if p['category'] == 'men']
     return render_template('category.html', products=filtered, category="Ұлдар",
                            category_en="men", category_desc="Ерлерге арналған ұлттық шапан мен камзол.",
                            contact=CONTACT_DISPLAY, phone=CONTACT_PHONE, site_name=SITE_NAME)
-
+ 
 @app.route('/kids')
 def kids():
     filtered = [p for p in get_products_list() if p['category'] == 'kids']
     return render_template('category.html', products=filtered, category="Балалар",
                            category_en="kids", category_desc="Балаларға арналған қазақ ұлттық кәжекей мен күртеше.",
                            contact=CONTACT_DISPLAY, phone=CONTACT_PHONE, site_name=SITE_NAME)
-
+ 
 @app.route('/product/<slug>')
 def product_detail(slug):
     product = get_product_by_slug(slug)
@@ -122,7 +122,7 @@ def product_detail(slug):
                            related_products=get_related(product),
                            contact=CONTACT_DISPLAY, phone=CONTACT_PHONE,
                            site_name=SITE_NAME, base_url=BASE_URL)
-
+ 
 @app.route('/product/<int:product_id>')
 def product_detail_old(product_id):
     products = load_products()
@@ -130,17 +130,17 @@ def product_detail_old(product_id):
     if not product:
         abort(404)
     return redirect(f"/product/{product['slug']}", code=301)
-
+ 
 @app.route('/about')
 def about():
     return render_template('about.html', contact=CONTACT_DISPLAY,
                            phone=CONTACT_PHONE, site_name=SITE_NAME)
-
+ 
 @app.route('/contact')
 def contact():
     return render_template('contact.html', contact=CONTACT_DISPLAY,
                            phone=CONTACT_PHONE, site_name=SITE_NAME)
-
+ 
 @app.route('/sitemap.xml')
 def sitemap():
     pages = ['/', '/women', '/men', '/kids', '/about', '/contact']
@@ -151,7 +151,7 @@ def sitemap():
         xml += f'  <url><loc>{BASE_URL}{url}</loc></url>\n'
     xml += '</urlset>'
     return Response(xml, mimetype='application/xml')
-
+ 
 # ============================================================
 #  АДМИН МАРШРУТТАРЫ
 # ============================================================
@@ -164,12 +164,12 @@ def admin_login():
             return redirect('/admin')
         error = 'Қате пароль!'
     return render_template('admin.html', page='login', error=error)
-
+ 
 @app.route('/admin/logout')
 def admin_logout():
     session.pop('admin', None)
     return redirect('/admin/login')
-
+ 
 @app.route('/admin')
 @admin_required
 def admin_dashboard():
@@ -179,7 +179,7 @@ def admin_dashboard():
                            men_count=sum(1 for p in products if p['category']=='men'),
                            women_count=sum(1 for p in products if p['category']=='women'),
                            kids_count=sum(1 for p in products if p['category']=='kids'))
-
+ 
 @app.route('/admin/product/new', methods=['GET', 'POST'])
 @admin_required
 def admin_new_product():
@@ -207,7 +207,7 @@ def admin_new_product():
         save_products(products)
         return redirect('/admin')
     return render_template('admin.html', page='form', product=None, action='new')
-
+ 
 @app.route('/admin/product/edit/<int:product_id>', methods=['GET', 'POST'])
 @admin_required
 def admin_edit_product(product_id):
@@ -237,7 +237,7 @@ def admin_edit_product(product_id):
     product = products[key]
     product['sizes_str'] = ', '.join(product.get('sizes', []))
     return render_template('admin.html', page='form', product=product, action='edit')
-
+ 
 @app.route('/admin/product/delete/<int:product_id>', methods=['POST'])
 @admin_required
 def admin_delete_product(product_id):
@@ -245,10 +245,10 @@ def admin_delete_product(product_id):
     products.pop(str(product_id), None)
     save_products(products)
     return redirect('/admin')
-
+ 
 @app.errorhandler(404)
 def not_found(e):
     return render_template('404.html', site_name=SITE_NAME), 404
-
+ 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)
