@@ -226,9 +226,9 @@
                 {% for product in products %}
                 <article class="product-card" data-name="{{ product.title | lower }}"
                     data-category="{{ product.category }}" aria-label="{{ product.title }}">
-                    <a href="/product/{{ product.id }}" class="card-img-link" tabindex="-1">
+                    <a href="/product/{{ product.slug }}" class="card-img-link" tabindex="-1">
                         <div class="card-img-wrap">
-                            <img src="{{ url_for('static', filename=product.image) }}" alt="{{ product.title }}"
+                            <img src="{{ product.image if product.image and product.image.startswith('http') else url_for('static', filename=product.image) if product.image else '' }}" alt="{{ product.title }}"
                                 loading="lazy" width="400" height="533" class="card-img">
                             <div class="card-overlay" aria-hidden="true"><span>Толығырақ →</span></div>
                         </div>
@@ -236,7 +236,7 @@
                     <div class="card-body">
                         <span class="card-category">{{ 'Қыздар' if product.category == 'women' else ('Ұлдар' if
                             product.category == 'men' else 'Балалар') }}</span>
-                        <h3 class="card-title"><a href="/product/{{ product.id }}">{{ product.title }}</a></h3>
+                        <h3 class="card-title"><a href="/product/{{ product.slug }}">{{ product.title }}</a></h3>
                         <p class="card-desc">{{ product.description }}</p>
                         <div class="card-footer">
                             <span class="card-price">{{ product.price }}</span>
