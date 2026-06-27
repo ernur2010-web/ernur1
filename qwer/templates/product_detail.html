@@ -22,7 +22,7 @@
     <meta property="og:description" content="{{ product.description[:150] }} Баға: {{ product.price }}.">
     <meta property="og:type" content="product">
     <meta property="og:locale" content="kk_KZ">
-    <meta property="og:image" content="{{ base_url }}/static/{{ product.detail_image }}">
+    <meta property="og:image" content="{{ product.detail_image if product.detail_image and product.detail_image.startswith('http') else base_url + '/static/' + product.detail_image }}">
     <meta property="og:image:width" content="800">
     <meta property="og:image:height" content="600">
     <meta property="og:url" content="{{ base_url }}/product/{{ product.slug }}">
@@ -34,7 +34,7 @@
       "@type": "Product",
       "name": "{{ product.title }}",
       "description": "{{ product.description }}",
-      "image": "{{ base_url }}/static/{{ product.detail_image }}",
+      "image": "{{ product.detail_image if product.detail_image and product.detail_image.startswith('http') else base_url + '/static/' + product.detail_image }}",
       "offers": {
         "@type": "Offer",
         "price": "{{ product.price_num }}",
@@ -159,7 +159,7 @@
                 <div class="product-gallery">
                     <div class="main-img-wrap" role="img" aria-label="{{ product.title }} — сурет">
                         <!-- SEO: alt текст нақты және бірегей -->
-                        <img src="{{ url_for('static', filename=product.detail_image) }}"
+                        <img src="{{ product.detail_image if product.detail_image and product.detail_image.startswith('http') else url_for('static', filename=product.detail_image) }}"
                             alt="{{ product.title }} — {{ product.color }} — {{ product.material }} — KZ ұлттық киімдер дүкені"
                             class="main-image" id="mainImage" width="600" height="800">
                         <button class="zoom-btn" onclick="openModal()" title="Үлкейту" aria-label="Суретті үлкейту">
@@ -175,7 +175,7 @@
                             product.category == 'men' else 'Балалар') }}</span>
                     </div>
                     <div class="thumbnail-list" role="list" aria-label="Суреттер">
-                        <img src="{{ url_for('static', filename=product.detail_image) }}" class="thumbnail active"
+                        <img src="{{ product.detail_image if product.detail_image and product.detail_image.startswith('http') else url_for('static', filename=product.detail_image) }}" class="thumbnail active"
                             onclick="changeImage(this)" alt="{{ product.title }} — шағын сурет" role="listitem"
                             tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')changeImage(this)">
                     </div>
@@ -291,7 +291,7 @@
                     style="display:block; text-decoration:none; color:inherit; border:1px solid #eee; border-radius:10px; padding:12px; width:200px; transition:box-shadow .2s;"
                     onmouseover="this.style.boxShadow='0 4px 16px rgba(0,0,0,.1)'"
                     onmouseout="this.style.boxShadow='none'">
-                    <img src="{{ url_for('static', filename=rp.image) }}" alt="{{ rp.title }} — {{ rp.color }}"
+                    <img src="{{ rp.image if rp.image and rp.image.startswith('http') else url_for('static', filename=rp.image) }}" alt="{{ rp.title }} — {{ rp.color }}"
                         style="width:100%; border-radius:6px; margin-bottom:8px;" loading="lazy">
                     <p style="font-size:14px; font-weight:500; margin-bottom:4px;">{{ rp.title }}</p>
                     <p style="font-size:13px; color:#888;">{{ rp.price }}</p>
